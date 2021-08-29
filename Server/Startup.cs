@@ -31,7 +31,7 @@ namespace P8.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-            var sqlConnectionString = "Host=ec2-35-170-85-206.compute-1.amazonaws.com;Username=idxtyrovrsrhsd;Database=d92h8f5bc1uif7;Port=5432;Password=ee14b9eef09987dd7c50b19c5e4ab57776a0a9fcb71956aec09d68ca1ddb2a3b;sslmode=Prefer;Trust Server Certificate=true;";
+            // var sqlConnectionString = "Host=  ;Username=  ;Database= ;Port= ;Password= ;sslmode= ;Trust Server Certificate= ;";
             services.AddDbContext<ClothDbContext>(options => options.UseNpgsql(sqlConnectionString));
             services.AddScoped<ClothProvider>();
 
