@@ -1,0 +1,104 @@
+@page "/products"
+<head>
+    <center>
+        <h1>
+            <big>
+                Farzan's online shop
+                @* @Initializer() *@
+            </big>
+        </h1>
+    </center>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-image">
+                <thead>
+                    <tr>
+                    <th scope="col">Image</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Add</th>
+                    <th scope="col">Remove</th>
+                    <th scope="col">Left In Stock</th>
+                    <th scope="col">Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in BaseTable.products)
+                    {
+                        <tr>
+                        <td class="w-25">
+                            <img src=@p.photo class="img-fluid img-thumbnail" alt="@p.name">
+                        </td>
+                        <td>@p.name</td>
+                        <td>@p.price</td>
+                        @* <td> <a href="products" class="btn btn-success btn-lg active" @onclick="(()=>AddToCart(p))" role="button" aria-pressed="true" >+</a> </td>
+                        <td> <a href="products" class="btn btn-danger btn-lg active" @onclick="(()=>RemoveFromCart(p))" role="button" aria-pressed="true" >-</a> </td> *@
+                        <td> <a class="btn btn-success btn-lg active" @onclick="(()=>AddToCart(p))" role="button" aria-pressed="true"  >+</a> </td>
+                        <td> <a class="btn btn-danger btn-lg active" @onclick="(()=>RemoveFromCart(p))" role="button" aria-pressed="true" >-</a> </td>
+                        <td>@p.LeftInStock</td>
+                        <td>@p.number</td>
+                        </tr>
+                    }
+                </tbody>
+                </table>   
+            </div>
+        </div>
+    </div>
+    <center> <a href="cart" class="btn btn-dark btn-lg active" role="button" aria-pressed="true" >continue and complete your shop</a> </center>
+</body>
+
+
+
+
+    @* <pre></pre> *@
+<h3>
+    Total price is : @cart.sum_value
+</h3>
+
+
+@code {
+    // baznevisi mikhad ****
+    // P7
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetItem();
+        @* await base.OnInitializedAsync(); *@
+    }
+    private async Task GetItem()
+    {
+        var client = new HttpClient();
+        BaseTable.products =  await client.GetFromJsonAsync<List<product>>("http://localhost:5001/api/Clothe/GetAllProductsFromDb");
+        StateHasChanged();
+    }
+
+    void AddToCart(product p)
+    {
+        if (p.LeftInStock > 0) 
+        {
+            p.number++;
+            p.LeftInStock--;
+            if(p.number == 1)
+            {
+                cart.products_list.Add(p);
+            }
+            cart.sum_value += p.price;
+        }
+    }
+    void RemoveFromCart(product p)
+    {
+        if (cart.products_list.Contains(p)) 
+        {
+            p.number--;
+            p.LeftInStock++;
+            if (p.number <= 0)
+                cart.products_list.Remove(p);
+            cart.sum_value -= p.price;
+        }
+    }
+}

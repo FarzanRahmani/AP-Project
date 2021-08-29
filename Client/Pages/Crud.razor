@@ -1,0 +1,161 @@
+@page "/crud"
+
+@* <h1>Crud</h1> *@
+
+@* <button class="btn btn-primary" @onclick="GetFromDb">Get (Read)</button> *@
+
+Get(Read) and Update were used in the shop and here we have Add(Create) and Delete(Remove) can be used here.
+<br>
+<br>
+
+
+<h2>Add(Create)</h2>
+
+<EditForm Model="@p" OnValidSubmit="CreateDbAdd" >  
+    <DataAnnotationsValidator />  
+    <ValidationSummary />  
+    <div class="row content">  
+        <div class="col-md-2"><label for="Name">Name</label></div>  
+        <div class="col-md-3"><InputText id="Name" @bind-Value="p.name" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="Price">Price</label></div>  
+        <div class="col-md-3"><InputNumber id="Price" @bind-Value="p.price" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="Photo">Photo</label></div>  
+        <div class="col-md-3"><InputText id="Photo" @bind-Value="p.photo" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="LeftInStock">Left In Stock</label></div>  
+        <div class="col-md-3"><InputNumber id="LeftInStock" @bind-Value="p.LeftInStock" /></div>  
+    </div>
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="Color">Color</label></div>  
+        <div class="col-md-3"><InputText id="Color" @bind-Value="p.Color" /></div>  
+    </div> 
+
+    <div class="row content">  
+        <button type="submit" class="btn btn-success" >Add to Db (Create)</button>  
+    </div>  
+
+</EditForm>  
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+@* <EditForm Model="@deleting_Id" OnValidSubmit="RemoveFromDb" >  
+    <DataAnnotationsValidator />  
+    <ValidationSummary />  
+    <div class="row content">  
+        <div class="col-md-2"><label for="Id">Product Id</label></div>  
+        <div class="col-md-3"><InputNumber id="Id" @bind-Value="deleting_Id" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <button type="submit" class="btn btn-danger" >Delete</button>  
+    </div>  
+</EditForm>   *@
+
+
+
+<h2>Delete(Remove)</h2>
+<button class="btn-dark" type="button" onclick="document.getElementById('RemoveCloth').style.display = 'block';">Remove cloth</button>
+<div id="RemoveCloth" style="display:none">
+id to remove <br />
+<input @bind="deleting_Id" />
+<button class="btn-danger" type="submit" @onclick="RemoveFromDb">remove</button>
+</div>
+
+
+@* <br>
+<br>
+<br>
+<br>
+<br> *@
+
+
+@* <EditForm Model="@p" OnValidSubmit="CreateDbAdd" >  
+    <DataAnnotationsValidator />  
+    <ValidationSummary />  
+    <div class="row content">  
+        <div class="col-md-2"><label for="Name">Name</label></div>  
+        <div class="col-md-3"><InputText id="Name" @bind-Value="p.name" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="Price">Price</label></div>  
+        <div class="col-md-3"><InputNumber id="Price" @bind-Value="p.price" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="Photo">Photo</label></div>  
+        <div class="col-md-3"><InputText id="Photo" @bind-Value="p.photo" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="LeftInStock">Left In Stock</label></div>  
+        <div class="col-md-3"><InputNumber id="LeftInStock" @bind-Value="p.LeftInStock" /></div>  
+    </div>
+
+    <div class="row content">  
+        <button type="submit" class="btn btn-warning" >Update</button>  
+    </div>  
+
+</EditForm>   *@
+
+@code {
+    product p = new product();
+
+    product answer_p = new product();
+    
+    public List<product> ps = new List<product>();
+
+    int deleting_Id;
+
+    private async void CreateDbAdd()
+    {
+            var client = new HttpClient();
+            var answer = await client.PostAsJsonAsync($"http://localhost:5001/api/Clothe/addProductToDb" , p);
+            @* var answer = await client.PostAsJsonAsync($"https://d99521271.herokuapp.com/api/Clothe/addProductToDb" , BaseTable.products); *@
+            StateHasChanged();
+        // 6273811160200942
+    }
+
+    private async void RemoveFromDb()
+    {
+            var client = new HttpClient();
+            var answer = await client.DeleteAsync($"http://localhost:5001/api/Clothe/DeleteProductFromDbById?&id={deleting_Id}");
+            @* var answer = await client.PostAsJsonAsync($"https://d99521271.herokuapp.com/api/Clothe/addProductToDb" , BaseTable.products); *@
+            StateHasChanged();
+        // 6273811160200942
+    }
+
+//    private async void GetFromDb()
+//    {
+//            var client = new HttpClient();
+//            ps = await client.GetFromJsonAsync<List<product>>($"http://localhost:5001/api/Clothe/GetAllProductsFromDb");
+//            @* var answer = await client.PostAsJsonAsync($"https://d99521271.herokuapp.com/api/Clothe/addProductToDb" , BaseTable.products); *@
+//            StateHasChanged();
+//        // 6273811160200942
+//    } 
+
+//    private async void UpdateToDb()
+//    {
+//            var client = new HttpClient();
+//            var answer = await client.PutAsJsonAsync($"http://localhost:5001/api/Clothe/UpdateProductInDb" , p);
+//            @* var answer = await client.PostAsJsonAsync($"https://d99521271.herokuapp.com/api/Clothe/addProductToDb" , BaseTable.products); *@
+//            StateHasChanged();
+//        // 6273811160200942
+//    }
+
+}

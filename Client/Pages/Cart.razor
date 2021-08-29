@@ -1,0 +1,129 @@
+﻿@page "/cart"
+@using Mydatas;
+@using Pages;
+@* @using NewApp.Shared *@
+@* @inject HttpClient Http *@
+
+
+<h1>Your Cart</h1>
+
+@* cart  *@
+@* @* <div class="container"> *@
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-image">
+                <thead>
+                    <tr>
+                    <th scope="col">Image</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in cart.products_list)
+                    {
+                        @if (item.number > 0)
+                        {
+                            <tr>
+                            <td class="w-25">
+                                <img src=@item.photo class="img-fluid img-thumbnail" alt="@item.name">
+                            </td>
+                            <td>@item.name</td>
+                            <td>@item.price</td>
+                            <td>@item.number</td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+                </table>   
+            </div>
+        </div>
+
+<h3>
+    Total price is : @cart.sum_value
+</h3>
+
+
+
+<h1>Please add your Information to finalize the shop</h1>
+
+@* <br>
+<h2>@final</h2> 
+<br> *@
+
+@* alert("Hello! I am an alert box!!") *@
+<EditForm Model="@u" OnValidSubmit="sabt">  
+    <DataAnnotationsValidator />  
+    <ValidationSummary />  
+    <div class="row content">  
+        <div class="col-md-2"><label for="FirstName">FisrtName</label></div>  
+        <div class="col-md-3"><InputText id="firstname" @bind-Value="u.FirstName" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="LastName">LastName</label></div>  
+        <div class="col-md-3"><InputText id="lastname" @bind-Value="u.LastName" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="EmailAddress">Email</label></div>  
+        <div class="col-md-3"><InputText id="EmailAddress" @bind-Value="u.EmailAddress" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="PhoneNumber">PhoneNumber</label></div>  
+        <div class="col-md-3"><InputText id="PhoneNumber" @bind-Value="u.PhoneNumber" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="CreditCardNumber">Credit Card Number</label></div>  
+        <div class="col-md-3"><InputText id="CreditCardNumber" @bind-Value="u.CreditCardNumber" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <div class="col-md-2"><label for="Address">Address</label></div>  
+        <div class="col-md-3"><InputText id="Address" @bind-Value="u.Address" /></div>  
+    </div>  
+
+    <div class="row content">  
+        <button type="submit" class="btn btn-info" >Submit</button>  
+    </div>  
+
+</EditForm>  
+<br>
+
+@if (@sign)
+{
+<div class="alert alert-success" role="alert">
+    Your Information has been registered thanks a zillion for shopping from us.
+</div>
+}
+
+@* submit --> to ye safhe taeed nahaii bede *@
+
+<a href="products" class="btn btn-warning btn-lg active btn-block" role="button" aria-pressed="true" >Back to the first page</a>
+
+@code {
+    User u = new User();     
+    @* string final; *@
+    bool sign = false;
+    void sabt() 
+    {
+        UpdateDb();
+        sign=true;
+        @* final="Your Information has been registered thanks a zillion for shopping from us."; *@
+    }
+
+    private async void UpdateDb()
+    {
+        if (BaseTable.products.Count > 0)
+        { 
+            var client = new HttpClient();
+            var answer = await client.PutAsJsonAsync($"http://localhost:5001/api/Clothe/UpdateProductsInDb" , BaseTable.products);
+            StateHasChanged();
+        } 
+        // 6273811160200942
+    }
+}
